@@ -3,7 +3,7 @@ from django.db import models
 
 class Genre(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=65535)
+    name = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.name
@@ -45,15 +45,15 @@ class Movie(models.Model):
     objects = MovieManager()
 
     id = models.PositiveIntegerField(primary_key=True)
-    poster_path = models.CharField(max_length=65535, null=True)
+    poster_path = models.CharField(max_length=1000, null=True)
     adult = models.BooleanField()
     overview = models.TextField()
     release_date = models.DateField()
     genres = models.ManyToManyField(Genre, related_name='movies')
-    original_title = models.CharField(max_length=65535)
-    original_language = models.CharField(max_length=65535)
-    title = models.CharField(max_length=65535)
-    backdrop_path = models.CharField(max_length=65535, null=True)
+    original_title = models.CharField(max_length=1000)
+    original_language = models.CharField(max_length=1000)
+    title = models.CharField(max_length=1000)
+    backdrop_path = models.CharField(max_length=1000, null=True)
     popularity = models.FloatField()
     vote_count = models.PositiveIntegerField()
     video = models.BooleanField()
