@@ -2,7 +2,7 @@ import os
 from typing import Optional, List
 import requests
 
-API_KEY = os.getenv('TMDB_API_KEY')
+API_KEY = os.environ['TMDB_API_KEY']
 API_BASE_URL = 'https://api.themoviedb.org/3'
 HEADERS = { 'User-Agent': 'MovieProxy' }
 
