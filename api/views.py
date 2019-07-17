@@ -1,5 +1,6 @@
 from typing import Sequence
 from django.http import HttpResponse, JsonResponse
+from django.db.utils import IntegrityError
 from .models import Movie, Genre, Comment
 from api import tmdb
 
@@ -29,10 +30,17 @@ def generate_mandatory_field_missing_response(field_missing: str) -> JsonRespons
         status=422
     )
 
-def generate_invalid_field_value_response(field_attempted: str, value_attempted: str) -> JsonResponse:
+def generate_invalid_field_value_response(
+        field_attempted: str, value_attempted: str, reason: str = None
+) -> JsonResponse:
     """Generate a 422 error response."""
     return JsonResponse(
-        { 'error': f'Value \'{value_attempted}\' is not valid for field \'{field_attempted}\'' },
+        {
+            'error': (
+                f'Value {value_attempted} is not valid for field {field_attempted}'
+                f'{f" ({reason})" if reason else ""}'
+            )
+        },
         status=422
     )
 
@@ -81,8 +89,14 @@ def comments(request) -> JsonResponse:
             return generate_mandatory_field_missing_response('movie_id')
         if 'text' not in request.POST:
             return generate_mandatory_field_missing_response('text')
-        comment = Comment.objects.create(movie_id=request.POST.get('movie_id'), text=request.POST.get('text'))
-        return JsonResponse(comment.to_dict(), status=201)
+        try:
+            comment = Comment.objects.create(movie_id=request.POST.get('movie_id'), text=request.POST.get('text'))
+        except IntegrityError:
+            return generate_invalid_field_value_response(
+                'movie_id', request.POST.get('movie_id'), 'movie not in database'
+            )
+        else:
+            return JsonResponse(comment.to_dict(), status=201)
 
     elif request.method == 'GET':
         comments = Comment.objects.all()
