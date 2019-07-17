@@ -4,8 +4,6 @@ from django.http import HttpResponse, JsonResponse
 from django.db.utils import IntegrityError
 from .models import Movie, Comment
 
-TEST_RESPONSE = { 'abc': 'xyz' }
-
 
 def generate_resource_not_found_response(resource_type: str) -> JsonResponse:
     """Generate a 404 error response."""
@@ -72,13 +70,14 @@ def movies(request) -> JsonResponse:
             )
         # optionally order
         if request.GET.get('order_by'):
-            for field in request.GET['order_by'].strip(',').split(','):
-                field_stripped = field.strip()
-                if field_stripped not in Movie.SORTABLE_FIELDS:
+            order_by_fields = [field.strip() for field in request.GET['order_by'].strip(',').split(',')]
+            for field in order_by_fields:
+                if field not in Movie.SORTABLE_FIELDS:
                     return generate_invalid_field_value_response(
-                        'order_by', field_stripped, 'not a sortable movie field'
+                        'order_by', field, 'not a sortable movie field'
                     )
-                movies = movies.order_by(field)
+            if order_by_fields:
+                movies = movies.order_by(*order_by_fields)
         return JsonResponse([movie.to_dict() for movie in movies], safe=False)
 
     else:
