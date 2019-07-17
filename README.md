@@ -5,10 +5,11 @@ A simple Django REST API.
 ## Running with Heroku
 
 This is the easiest way to run MovieProxy.
+
 Create a Heroku app, connect this repository to it and, in the Settings tab, add the following config vars to it:
 
 * `DISABLE_COLLECTSTATIC` – set this to `1` to disable a Heroku feature that would be problematic in this case
-* `ALLOWED_HOSTS` – a comma-separated list of hostnames on which your app shall be available (e.g. movieproxy.herokuapp.com)
+* `ALLOWED_HOSTS` – a comma-separated list of hostnames on which your app shall be available (e.g. `movieproxy.herokuapp.com`)
 * `SECRET_KEY` – a Django secret key
 * `TMDB_API_KEY` – a [TMDb API](https://developers.themoviedb.org/3/getting-started/introduction) key for fetching movie details
 
