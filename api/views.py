@@ -65,7 +65,7 @@ def movies(request) -> JsonResponse:
     elif request.method == 'GET':
         movies = Movie.objects.all()
         # optionally filter
-        if request.GET.get(['title']):
+        if request.GET.get('title'):
             movies = (
                 movies.filter(title__icontains=request.GET['title']) |
                 movies.filter(original_title__icontains=request.GET['title'])
