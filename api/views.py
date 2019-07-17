@@ -6,6 +6,7 @@ from api import tmdb
 
 TEST_RESPONSE = { 'abc': 'xyz' }
 
+
 def generate_resource_not_found_response(resource_type: str) -> JsonResponse:
     """Generate a 404 error response."""
     return JsonResponse(
@@ -52,8 +53,8 @@ def welcome(request) -> HttpResponse:
 def movies(request) -> JsonResponse:
     if request.method == 'POST':
         # check if required field is present
-        if 'title' not in request.POST:
-            return generate_resource_not_found_response('movie')
+        if 'title' not in request.POST or not request.POST.get('title'):
+            return generate_mandatory_field_missing_response('title')
         raw_movie = tmdb.fetch_movie(request.POST.get('title'))
         if raw_movie:
             genre_ids = raw_movie.pop('genre_ids')
@@ -67,7 +68,7 @@ def movies(request) -> JsonResponse:
                     movie.genres.add(genre)
             return JsonResponse(movie.to_dict(), status=201 if created else 200)
         else:
-            return generate_mandatory_field_missing_response('title')
+            return generate_resource_not_found_response('movie')
 
     elif request.method == 'GET':
         movies = Movie.objects.all()
