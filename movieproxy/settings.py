@@ -6,7 +6,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = bool(os.getenv('DEBUG'))
 
-ALLOWED_HOSTS = [] if DEBUG else os.environ['ALLOWED_HOSTS'].split(',')
+ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
 
 # Application definition
 
