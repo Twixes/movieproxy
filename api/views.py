@@ -53,9 +53,9 @@ def welcome(request) -> HttpResponse:
 def movies(request) -> JsonResponse:
     if request.method == 'POST':
         # check if required field is present
-        if 'title' not in request.POST or not request.POST.get('title'):
+        if 'title' not in request.POST or not request.POST['title']:
             return generate_mandatory_field_missing_response('title')
-        raw_movie = tmdb.fetch_movie(request.POST.get('title'))
+        raw_movie = tmdb.fetch_movie(request.POST['title'])
         if raw_movie:
             genre_ids = raw_movie.pop('genre_ids')
             movie, created = Movie.objects.update_or_create(**raw_movie)
@@ -73,14 +73,14 @@ def movies(request) -> JsonResponse:
     elif request.method == 'GET':
         movies = Movie.objects.all()
         # optionally filter
-        if 'title' in request.GET and request.GET.get('title'):
+        if 'title' in request.GET and request.GET['title']:
             movies = (
-                movies.filter(title__icontains=request.GET.get('title')) |
-                movies.filter(original_title__icontains=request.GET.get('title'))
+                movies.filter(title__icontains=request.GET['title']) |
+                movies.filter(original_title__icontains=request.GET['title'])
             )
         # optionally order
-        if 'order_by' in request.GET and request.GET.get('order_by'):
-            for field in request.GET.get('order_by').strip(',').split(','):
+        if 'order_by' in request.GET and request.GET['order_by']:
+            for field in request.GET['order_by'].strip(',').split(','):
                 field_stripped = field.strip()
                 if field_stripped not in Movie.SORTABLE_FIELDS:
                     return generate_invalid_field_value_response(
@@ -101,10 +101,10 @@ def comments(request) -> JsonResponse:
         if 'text' not in request.POST:
             return generate_mandatory_field_missing_response('text')
         try:
-            comment = Comment.objects.create(movie_id=request.POST.get('movie_id'), text=request.POST.get('text'))
+            comment = Comment.objects.create(movie_id=request.POST['movie_id'], text=request.POST['text'])
         except IntegrityError:
             return generate_invalid_field_value_response(
-                'movie_id', request.POST.get('movie_id'), 'movie not in database'
+                'movie_id', request.POST['movie_id'], 'movie not in database'
             )
         else:
             return JsonResponse(comment.to_dict(), status=201)
@@ -114,9 +114,9 @@ def comments(request) -> JsonResponse:
         # optionally filter
         if 'movie_id' in request.GET:
             try:
-                comments = comments.filter(movie_id=request.GET.get('movie_id'))
+                comments = comments.filter(movie_id=request.GET['movie_id'])
             except ValueError:
-                return generate_invalid_field_value_response('movie_id', request.GET.get('movie_id'))
+                return generate_invalid_field_value_response('movie_id', request.GET['movie_id'])
         return JsonResponse([comment.to_dict() for comment in comments], safe=False)
 
     else:
@@ -132,13 +132,13 @@ def top(request) -> JsonResponse:
         if 'before' not in request.GET:
             return generate_mandatory_field_missing_response('before')
         try:
-            movies = movies.filter(release_date__gt=request.GET.get('after'))
+            movies = movies.filter(release_date__gt=request.GET['after'])
         except ValueError:
-            return generate_invalid_field_value_response('after', request.GET.get('after'))
+            return generate_invalid_field_value_response('after', request.GET['after'])
         try:
-            movies = movies.filter(release_date__lt=request.GET.get('before'))
+            movies = movies.filter(release_date__lt=request.GET['before'])
         except ValueError:
-            return generate_invalid_field_value_response('before', request.GET.get('before'))
+            return generate_invalid_field_value_response('before', request.GET['before'])
         return JsonResponse(movies.top(), safe=False)
 
     else:
