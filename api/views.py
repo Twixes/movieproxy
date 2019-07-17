@@ -71,6 +71,12 @@ def movies(request) -> JsonResponse:
 
     elif request.method == 'GET':
         movies = Movie.objects.all()
+        # optionally filter
+        if 'title' in request.GET and request.GET.get('title'):
+            movies = (
+                movies.filter(title__icontains=request.GET.get('title')) |
+                movies.filter(original_title__icontains=request.GET.get('title'))
+            )
         # optionally order
         if 'order_by' in request.GET and request.GET.get('order_by'):
             for field in request.GET.get('order_by').strip(',').split(','):
