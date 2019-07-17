@@ -40,8 +40,6 @@ vote_average      | number                 | movie vote average on TMDb
 ```JSON
 {
     "id": 238,
-    "poster_path": "/rPdtLWNsZmAtoZl9PK7S2wE3qiS.jpg",
-    "adult": false,
     "overview": "Spanning the years 1945 to 1955, a chronicle of the fictional Italian-American Corleone crime family. When organized crime family patriarch, Vito Corleone barely survives an attempt on his life, his youngest son, Michael steps in to take care of the would-be killers, launching a campaign of bloody revenge.",
     "release_date": "1972-03-14",
     "genres": [
@@ -51,10 +49,8 @@ vote_average      | number                 | movie vote average on TMDb
     "original_title": "The Godfather",
     "original_language": "en",
     "title": "The Godfather",
-    "backdrop_path": "/6xKCYgH16UuwEGAyroLU6p8HLIn.jpg",
     "popularity": 26.961,
     "vote_count": 10216,
-    "video": false,
     "vote_average": 8.6
 }
 ```
@@ -177,6 +173,6 @@ Now deploy from the Deploy tab and wait for migrations to finish. After that, th
 Why these packages are in `requirements.txt`:
 
 * `Django` – it's Django
-* `requests` – for integration with the TMDb API
-* `psycopg2` – for Postgres support
-* `dj-database-url` – for Heroku Postgres add-on support
+* `requests` – for communication with the TMDb API
+* `psycopg2` – for Postgres support (SQLite may be used in development but Postgres is production–grade)
+* `dj-database-url` – for Heroku Postgres add-on support (extremely simple to set up this way)
