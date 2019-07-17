@@ -87,6 +87,7 @@ class Movie(models.Model):
 
 
 class Comment(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     text = models.TextField()
 
@@ -96,6 +97,7 @@ class Comment(models.Model):
     def to_dict(self) -> dict:
         return {
             'id': self.id,
+            'created_at': self.created_at,
             'movie_id': self.movie.id,
-            'text': self.text
+            'text': self.text,
         }

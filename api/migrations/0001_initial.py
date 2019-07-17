@@ -40,6 +40,7 @@ class Migration(migrations.Migration):
             name='Comment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('text', models.TextField()),
                 ('movie', models.ForeignKey(on_delete=models.deletion.CASCADE, to='api.Movie'))
             ]
