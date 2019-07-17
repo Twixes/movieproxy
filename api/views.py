@@ -1,4 +1,5 @@
 from typing import Sequence
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.db.utils import IntegrityError
 from .models import Movie, Genre, Comment
@@ -127,17 +128,17 @@ def top(request) -> JsonResponse:
     if request.method == 'GET':
         movies = Movie.objects.all()
         # check if required fields are present
-        if 'after' not in request.GET:
+        if 'after' not in request.GET or not request.GET['after']:
             return generate_mandatory_field_missing_response('after')
-        if 'before' not in request.GET:
+        if 'before' not in request.GET or not request.GET['before']:
             return generate_mandatory_field_missing_response('before')
         try:
             movies = movies.filter(release_date__gt=request.GET['after'])
-        except ValueError:
+        except ValidationError:
             return generate_invalid_field_value_response('after', request.GET['after'])
         try:
             movies = movies.filter(release_date__lt=request.GET['before'])
-        except ValueError:
+        except ValidationError:
             return generate_invalid_field_value_response('before', request.GET['before'])
         return JsonResponse(movies.top(), safe=False)
 
