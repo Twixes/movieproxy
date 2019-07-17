@@ -5,8 +5,6 @@ from .models import Movie, Genre, Comment
 from api import tmdb
 
 TEST_RESPONSE = { 'abc': 'xyz' }
-MOVIE_FIELDS = [field.name for field in Movie._meta.get_fields()]
-
 
 def generate_resource_not_found_response(resource_type: str) -> JsonResponse:
     """Generate a 404 error response."""
@@ -74,11 +72,14 @@ def movies(request) -> JsonResponse:
     elif request.method == 'GET':
         movies = Movie.objects.all()
         # optionally order
-        if 'order_by' in request.GET:
-            if request.GET.get('order_by') in MOVIE_FIELDS:
-                movies = movies.order_by(request.GET.get('order_by'))
-            else:
-                return generate_invalid_field_value_response('order_by', request.GET.get('order_by'))
+        if 'order_by' in request.GET and request.GET.get('order_by'):
+            for field in request.GET.get('order_by').strip(',').split(','):
+                field_stripped = field.strip()
+                if field_stripped not in Movie.SORTABLE_FIELDS:
+                    return generate_invalid_field_value_response(
+                        'order_by', field_stripped, 'not a sortable movie field'
+                    )
+                movies = movies.order_by(field)
         return JsonResponse([movie.to_dict() for movie in movies], safe=False)
 
     else:

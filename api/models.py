@@ -42,6 +42,11 @@ class MovieManager(models.Manager):
 
 
 class Movie(models.Model):
+    SORTABLE_FIELDS = [
+        'id', 'adult', 'release_date', 'original_title', 'original_language', 'title', 'popularity', 'vote_count',
+        'video', 'vote_average'
+    ]
+
     objects = MovieManager()
 
     id = models.PositiveIntegerField(primary_key=True)
