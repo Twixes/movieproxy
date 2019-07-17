@@ -23,16 +23,16 @@ class MovieQuerySet(models.QuerySet):
             'movie_id': movie.id,
             'total_comments': movie.comment_set.count()
         } for movie in self]
+        if top_movies:
+            top_movies.sort(key=lambda movie: movie['total_comments'], reverse=True)
 
-        top_movies.sort(key=lambda movie: movie['total_comments'], reverse=True)
-
-        current_min_total_comments = top_movies[0]['total_comments']
-        current_rank = 1
-        for movie in top_movies:
-            if movie['total_comments'] < current_min_total_comments:
-                current_rank += 1
-                current_min_total_comments = movie['total_comments']
-            movie['rank'] = current_rank
+            current_min_total_comments = top_movies[0]['total_comments']
+            current_rank = 1
+            for movie in top_movies:
+                if movie['total_comments'] < current_min_total_comments:
+                    current_rank += 1
+                    current_min_total_comments = movie['total_comments']
+                movie['rank'] = current_rank
 
         return top_movies
 
