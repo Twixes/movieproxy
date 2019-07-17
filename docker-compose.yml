@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    environment:
+        - SECRET_KEY
+        - DEBUG
+        - ALLOWED_HOSTS
+        - TMDB_API_KEY
+    command: python manage.py runserver 0:$PORT
+    volumes:
+      - .:/code
+      - .db_data/db.sqlite3:/db.sqlite3
+    ports:
+      - $PORT:$PORT
