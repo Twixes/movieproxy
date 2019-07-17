@@ -64,12 +64,11 @@ class MovieManager(models.Manager):
 
 
 class Movie(models.Model):
-    _SORTABLE_FIELDS = [
-        'id', 'adult', 'release_date', 'original_title', 'original_language', 'title', 'popularity', 'vote_count',
-        'video', 'vote_average'
+    __SORTABLE_FIELDS = [
+        'id', 'release_date', 'original_title', 'original_language', 'title', 'popularity', 'vote_count', 'vote_average'
     ]
 
-    SORTABLE_FIELDS = _SORTABLE_FIELDS + [f'-{field}' for field in _SORTABLE_FIELDS]
+    SORTABLE_FIELDS = __SORTABLE_FIELDS + [f'-{field}' for field in __SORTABLE_FIELDS]
 
     objects = MovieManager()
 
