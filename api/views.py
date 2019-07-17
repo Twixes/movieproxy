@@ -2,8 +2,7 @@ from typing import Sequence
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.db.utils import IntegrityError
-from .models import Movie, Genre, Comment
-from api import tmdb
+from .models import Movie, Comment
 
 TEST_RESPONSE = { 'abc': 'xyz' }
 
@@ -56,20 +55,12 @@ def movies(request) -> JsonResponse:
         # check if required field is present
         if not request.POST.get('title'):
             return generate_mandatory_field_missing_response('title')
-        raw_movie = tmdb.fetch_movie(request.POST['title'])
-        if raw_movie:
-            genre_ids = raw_movie.pop('genre_ids')
-            movie, created = Movie.objects.update_or_create(**raw_movie)
-            for genre_id in genre_ids:
-                try:
-                    genre = Genre.objects.get(id=genre_id)
-                except Genre.DoesNotExist:
-                    pass
-                else:
-                    movie.genres.add(genre)
-            return JsonResponse(movie.to_dict(), status=201 if created else 200)
-        else:
+        try:
+            movie, created = Movie.objects.update_or_create_from_tmdb(request.POST['title'])
+        except ValueError:
             return generate_resource_not_found_response('movie')
+        else:
+            return JsonResponse(movie.to_dict(), status=201 if created else 200)
 
     elif request.method == 'GET':
         movies = Movie.objects.all()

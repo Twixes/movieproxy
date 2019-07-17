@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Dict, Union
 from django.db import models
+from api import tmdb
 
 
 class Genre(models.Model):
@@ -17,7 +18,7 @@ class Genre(models.Model):
 
 
 class MovieQuerySet(models.QuerySet):
-    def top(self) -> List[dict]:
+    def top(self) -> List[Dict[str, Union[str, int]]]:
         top_movies = [{
             'movie_id': movie.id,
             'total_comments': movie.comment_set.count()
@@ -39,6 +40,21 @@ class MovieQuerySet(models.QuerySet):
 class MovieManager(models.Manager):
     def get_queryset(self):
         return MovieQuerySet(self.model, using=self._db)
+
+    def update_or_create_from_tmdb(self, title: str) -> tuple:
+        raw_movie = tmdb.fetch_movie(title)
+        if not raw_movie:
+            raise ValueError('no matching movie was found')
+        genre_ids = raw_movie.pop('genre_ids')
+        movie, created = self.update_or_create(**raw_movie)
+        for genre_id in genre_ids:
+            try:
+                genre = Genre.objects.get(id=genre_id)
+            except Genre.DoesNotExist:
+                pass
+            else:
+                movie.genres.add(genre)
+        return movie, created
 
 
 class Movie(models.Model):
