@@ -23,12 +23,14 @@ def generate_method_not_allowed_response(method_attempted: str, methods_allowed:
         status=405
     )
 
+
 def generate_mandatory_field_missing_response(field_missing: str) -> JsonResponse:
     """Generate a 422 error response."""
     return JsonResponse(
         { 'error': f'Mandatory field \'{field_missing}\' is missing' },
         status=422
     )
+
 
 def generate_invalid_field_value_response(
         field_attempted: str, value_attempted: str, reason: str = None
@@ -81,6 +83,7 @@ def movies(request) -> JsonResponse:
 
     else:
         return generate_method_not_allowed_response(request.method, ('GET', 'POST'))
+
 
 def comments(request) -> JsonResponse:
     if request.method == 'POST':

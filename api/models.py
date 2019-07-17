@@ -1,6 +1,7 @@
 from typing import List
 from django.db import models
 
+
 class Genre(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=1000)
