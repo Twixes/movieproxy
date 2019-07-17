@@ -26,18 +26,14 @@ name  | string  | genre name
 field             | type                   | description
 ----------------- | ---------------------- | -----------------------------------------------
 id                | id                     | movie ID
-poster_path       | string?                | TMDb movie poster path
-adult             | boolean                | whether the movie is classified as an adult one
 overview          | string                 | movie overview
 release_date      | string                 | movie release date in ISO format
 genres            | array of genre objects | IDs of genres the movie is associated with
 original_title    | string                 | movie title in original language
 original_language | string                 | original movie language code
 title             | string                 | movie title
-backdrop_path     | string?                | TMDb movie backdrop path
 popularity        | number                 | movie popularity score
 vote_count        | integer                | number of votes gathered by movie on TMDb
-video             | boolean                |
 vote_average      | number                 | movie vote average on TMDb
 
 ##### Example
