@@ -7,8 +7,7 @@ from api import tmdb
 def populate_genres(apps, schema_editor):
     Genre = apps.get_model('api', 'Genre')
     genres = tmdb.fetch_genres()
-    for genre in genres:
-        Genre.objects.create(**genre)
+    Genre.objects.bulk_create([Genre(**genre) for genre in genres], ignore_conflicts=True)
 
 
 def clear_genres(apps, schema_editor):
