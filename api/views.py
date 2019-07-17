@@ -119,18 +119,14 @@ def top(request) -> JsonResponse:
     if request.method == 'GET':
         movies = Movie.objects.all()
         # check if required fields are present
-        if not request.GET.get('after'):
-            return generate_mandatory_field_missing_response('after')
-        if not request.GET.get('before'):
-            return generate_mandatory_field_missing_response('before')
+        if not request.GET.get('start_date'):
+            return generate_mandatory_field_missing_response('start_date')
+        if not request.GET.get('end_date'):
+            return generate_mandatory_field_missing_response('end_date')
         try:
-            movies = movies.filter(release_date__gt=request.GET['after'])
+            movies = movies.filter(release_date__range=(request.GET['start_date'], request.GET['end_date']))
         except ValidationError:
-            return generate_invalid_field_value_response('after', request.GET['after'])
-        try:
-            movies = movies.filter(release_date__lt=request.GET['before'])
-        except ValidationError:
-            return generate_invalid_field_value_response('before', request.GET['before'])
+            return generate_invalid_field_value_response('start_date', request.GET['start_date'])
         return JsonResponse(movies.top(), safe=False)
 
     else:
