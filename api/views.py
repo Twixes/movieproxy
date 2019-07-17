@@ -1,22 +1,10 @@
-import json
 from typing import Sequence
-from django.core import serializers
-from django.db import models
-from django.forms import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from .models import Movie, Genre, Comment
 from api import tmdb
 
 TEST_RESPONSE = { 'abc': 'xyz' }
 MOVIE_FIELDS = [field.name for field in Movie._meta.get_fields()]
-
-
-class ExtendedJSONEncoder(serializers.json.DjangoJSONEncoder):
-    def default(self, o):
-        # this is needed to make serialization of many-to-many relation fields possible
-        if isinstance(o, models.Model):
-            return model_to_dict(o)
-        return super().default(o)
 
 
 def generate_resource_not_found_response(resource_type: str) -> JsonResponse:
@@ -69,9 +57,7 @@ def movies(request) -> JsonResponse:
                     pass
                 else:
                     movie.genres.add(genre)
-            return JsonResponse(
-                json.dumps(movie, cls=ExtendedJSONEncoder), safe=False, status=201 if created else 200
-            )
+            return JsonResponse(movie.to_dict(), status=201 if created else 200)
         else:
             return generate_mandatory_field_missing_response('title')
 
@@ -83,7 +69,7 @@ def movies(request) -> JsonResponse:
                 movies = movies.order_by(request.GET.get('order_by'))
             else:
                 return generate_invalid_field_value_response('order_by', request.GET.get('order_by'))
-        return JsonResponse(json.dumps(list(movies), cls=ExtendedJSONEncoder), safe=False)
+        return JsonResponse([movie.to_dict() for movie in movies], safe=False)
 
     else:
         return generate_method_not_allowed_response(request.method, ('GET', 'POST'))
@@ -96,7 +82,7 @@ def comments(request) -> JsonResponse:
         if 'text' not in request.POST:
             return generate_mandatory_field_missing_response('text')
         comment = Comment.objects.create(movie_id=request.POST.get('movie_id'), text=request.POST.get('text'))
-        return JsonResponse(json.dumps(comment, cls=ExtendedJSONEncoder), safe=False, status=201)
+        return JsonResponse(comment.to_dict(), status=201)
 
     elif request.method == 'GET':
         comments = Comment.objects.all()
@@ -106,7 +92,7 @@ def comments(request) -> JsonResponse:
                 comments = comments.filter(movie_id=request.GET.get('movie_id'))
             except ValueError:
                 return generate_invalid_field_value_response('movie_id', request.GET.get('movie_id'))
-        return JsonResponse(json.dumps(list(comments), cls=ExtendedJSONEncoder), safe=False)
+        return JsonResponse([comment.to_dict() for comment in comments], safe=False)
 
     else:
         return generate_method_not_allowed_response(request.method, ('GET', 'POST'))
@@ -128,7 +114,7 @@ def top(request) -> JsonResponse:
             movies = movies.filter(release_date__lt=request.GET.get('before'))
         except ValueError:
             return generate_invalid_field_value_response('before', request.GET.get('before'))
-        return JsonResponse(json.dumps(movies.top(), cls=ExtendedJSONEncoder), safe=False)
+        return JsonResponse(movies.top(), safe=False)
 
     else:
         return generate_method_not_allowed_response(request.method, ('GET',))

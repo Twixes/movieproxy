@@ -8,6 +8,12 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
 
 class MovieQuerySet(models.QuerySet):
     def top(self) -> List[dict]:
@@ -62,6 +68,24 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'poster_path': self.poster_path,
+            'adult': self.adult,
+            'overview': self.overview,
+            'release_date': self.release_date,
+            'genre_ids': [genre.id for genre in self.genres.all()],
+            'original_title': self.original_title,
+            'original_language': self.original_language,
+            'title': self.title,
+            'backdrop_path': self.backdrop_path,
+            'popularity': self.popularity,
+            'vote_count': self.vote_count,
+            'video': self.video,
+            'vote_average': self.vote_average
+        }
+
 
 class Comment(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
@@ -69,3 +93,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'movie_id': self.movie.id,
+            'text': self.text
+        }
