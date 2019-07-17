@@ -96,7 +96,7 @@ class Movie(models.Model):
             'adult': self.adult,
             'overview': self.overview,
             'release_date': self.release_date,
-            'genre_ids': [genre.to_dict() for genre in self.genres.all()],
+            'genres': [genre.to_dict() for genre in self.genres.all()],
             'original_title': self.original_title,
             'original_language': self.original_language,
             'title': self.title,
