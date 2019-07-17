@@ -75,10 +75,10 @@ text       | string  | comment body
 ##### Example
 ```JSON
 {
-    "id": 3,
+    "id": 1024,
     "created_at": "2019-07-07T21:37:69.420Z",
     "movie_id": 109445,
-    "text": "Worse than The Room"
+    "text": "An abomination, worse than The Room"
 }
 ```
 
