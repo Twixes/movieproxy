@@ -117,17 +117,28 @@ def comments(request) -> JsonResponse:
 
 def top(request) -> JsonResponse:
     if request.method == 'GET':
-        movies = Movie.objects.all()
         # check if required fields are present
         if not request.GET.get('start_date'):
             return generate_mandatory_field_missing_response('start_date')
         if not request.GET.get('end_date'):
             return generate_mandatory_field_missing_response('end_date')
+        max_rank = None
+        if request.GET.get('max_rank'):
+            try:
+                max_rank = int(request.GET['max_rank'])
+            except ValueError:
+                return generate_invalid_field_value_response('max_rank', request.GET['max_rank'], 'must be an integer')
         try:
-            movies = movies.filter(release_date__range=(request.GET['start_date'], request.GET['end_date']))
-        except ValidationError:
-            return generate_invalid_field_value_response('start_date', request.GET['start_date'])
-        return JsonResponse(movies.top(), safe=False)
+            top = Movie.objects.all().top(request.GET['start_date'], request.GET['end_date'], max_rank)
+        except ValidationError as e:
+            # check from which date paramater does the error stem
+            if e.params['value'].startswith(request.GET['start_date']):
+                return generate_invalid_field_value_response('start_date', request.GET['start_date'])
+            else:
+                return generate_invalid_field_value_response('end_date', request.GET['end_date'])
+
+        else:
+            return JsonResponse(top, safe=False)
 
     else:
         return generate_method_not_allowed_response(request.method, ('GET',))

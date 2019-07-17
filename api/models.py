@@ -18,23 +18,29 @@ class Genre(models.Model):
 
 
 class MovieQuerySet(models.QuerySet):
-    def top(self) -> List[Dict[str, Union[str, int]]]:
+    def top(self, start_date: str, end_date: str, max_rank: int = None) -> List[Dict[str, Union[str, int]]]:
         top_movies = [{
             'movie_id': movie.id,
-            'total_comments': movie.comment_set.count()
+            'total_comments': movie.comment_set.filter(
+                created_at__range=(f'{start_date}T00:00:00.000Z', f'{end_date}T23:59:59.999Z')
+            ).count()
         } for movie in self]
+
         if top_movies:
             top_movies.sort(key=lambda movie: movie['total_comments'], reverse=True)
-
             current_min_total_comments = top_movies[0]['total_comments']
             current_rank = 1
-            for movie in top_movies:
+            cutoff_index = len(top_movies)
+            for current_index, movie in enumerate(top_movies):
                 if movie['total_comments'] < current_min_total_comments:
                     current_rank += 1
                     current_min_total_comments = movie['total_comments']
                 movie['rank'] = current_rank
+                if max_rank and current_rank > max_rank:
+                    cutoff_index = current_index
+                    break
 
-        return top_movies
+        return top_movies[:cutoff_index]
 
 
 class MovieManager(models.Manager):
