@@ -18,7 +18,6 @@ class Genre(models.Model):
 
 class MovieQuerySet(models.QuerySet):
     def top(self) -> List[dict]:
-        print(self)
         top_movies = [{
             'movie_id': movie.id,
             'total_comments': movie.comment_set.count()
@@ -40,12 +39,6 @@ class MovieQuerySet(models.QuerySet):
 class MovieManager(models.Manager):
     def get_queryset(self):
         return MovieQuerySet(self.model, using=self._db)
-
-    def pdfs(self):
-        return self.get_queryset().pdfs()
-
-    def smaller_than(self, size):
-        return self.get_queryset().smaller_than(size)
 
 
 class Movie(models.Model):
