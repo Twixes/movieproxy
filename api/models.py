@@ -98,18 +98,14 @@ class Movie(models.Model):
     def to_dict(self) -> dict:
         return {
             'id': self.id,
-            'poster_path': self.poster_path,
-            'adult': self.adult,
             'overview': self.overview,
             'release_date': self.release_date,
             'genres': [genre.to_dict() for genre in self.genres.all()],
             'original_title': self.original_title,
             'original_language': self.original_language,
             'title': self.title,
-            'backdrop_path': self.backdrop_path,
             'popularity': self.popularity,
             'vote_count': self.vote_count,
-            'video': self.video,
             'vote_average': self.vote_average
         }
 
