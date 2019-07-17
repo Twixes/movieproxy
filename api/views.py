@@ -38,7 +38,7 @@ def generate_invalid_field_value_response(
     return JsonResponse(
         {
             'error': (
-                f'Value {value_attempted} is not valid for field {field_attempted}'
+                f'Value \'{value_attempted}\' is not valid for field \'{field_attempted}\''
                 f'{f" ({reason})" if reason else ""}'
             )
         },
