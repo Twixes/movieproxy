@@ -1,6 +1,8 @@
 # MovieProxy
 
+
 A simple Django REST API.
+
 
 ## Running with Heroku
 
@@ -18,3 +20,13 @@ Optionally you can also add var `DEBUG` and set it to anything to anything to en
 Then install the Heroku Postgres addon in the Resources tab. The app will automatically use this database.
 
 Now deploy from the Deploy tab and wait for migrations to finish. After that, the app should be online and ready for use.
+
+
+## Dependencies
+
+Why these packages are in `requirements.txt`:
+
+* `Django` – it's Django
+* `requests` – for integration with the TMDb API
+* `psycopg2` – for Postgres support
+* `dj-database-url` – for Heroku Postgres add-on support
