@@ -51,9 +51,18 @@ class MovieManager(models.Manager):
         raw_movie = tmdb.fetch_movie(title)
         if not raw_movie:
             raise ValueError('no matching movie was found')
-        genre_ids = raw_movie.pop('genre_ids')
-        movie, created = self.update_or_create(**raw_movie)
-        for genre_id in genre_ids:
+        movie, created = self.update_or_create(
+            id=raw_movie['id'],
+            overview=raw_movie['overview'],
+            release_date=raw_movie['release_date'],
+            original_title=raw_movie['original_title'],
+            original_language=raw_movie['original_language'],
+            title=raw_movie['title'],
+            popularity=raw_movie['popularity'],
+            vote_count=raw_movie['vote_count'],
+            vote_average=raw_movie['vote_average'],
+        )
+        for genre_id in raw_movie['genre_ids']:
             try:
                 genre = Genre.objects.get(id=genre_id)
             except Genre.DoesNotExist:
