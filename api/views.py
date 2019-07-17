@@ -54,7 +54,7 @@ def welcome(request) -> HttpResponse:
 def movies(request) -> JsonResponse:
     if request.method == 'POST':
         # check if required field is present
-        if 'title' not in request.POST or not request.POST['title']:
+        if not request.POST.get('title'):
             return generate_mandatory_field_missing_response('title')
         raw_movie = tmdb.fetch_movie(request.POST['title'])
         if raw_movie:
@@ -74,13 +74,13 @@ def movies(request) -> JsonResponse:
     elif request.method == 'GET':
         movies = Movie.objects.all()
         # optionally filter
-        if 'title' in request.GET and request.GET['title']:
+        if request.GET.get(['title']):
             movies = (
                 movies.filter(title__icontains=request.GET['title']) |
                 movies.filter(original_title__icontains=request.GET['title'])
             )
         # optionally order
-        if 'order_by' in request.GET and request.GET['order_by']:
+        if request.GET.get('order_by'):
             for field in request.GET['order_by'].strip(',').split(','):
                 field_stripped = field.strip()
                 if field_stripped not in Movie.SORTABLE_FIELDS:
@@ -97,9 +97,9 @@ def movies(request) -> JsonResponse:
 def comments(request) -> JsonResponse:
     if request.method == 'POST':
         # check if required fields are present
-        if 'movie_id' not in request.POST:
+        if not request.POST.get('movie_id'):
             return generate_mandatory_field_missing_response('movie_id')
-        if 'text' not in request.POST:
+        if not request.POST.get('text'):
             return generate_mandatory_field_missing_response('text')
         try:
             comment = Comment.objects.create(movie_id=request.POST['movie_id'], text=request.POST['text'])
@@ -113,7 +113,7 @@ def comments(request) -> JsonResponse:
     elif request.method == 'GET':
         comments = Comment.objects.all()
         # optionally filter
-        if 'movie_id' in request.GET:
+        if request.GET.get('movie_id'):
             try:
                 comments = comments.filter(movie_id=request.GET['movie_id'])
             except ValueError:
@@ -128,9 +128,9 @@ def top(request) -> JsonResponse:
     if request.method == 'GET':
         movies = Movie.objects.all()
         # check if required fields are present
-        if 'after' not in request.GET or not request.GET['after']:
+        if not request.GET.get('after'):
             return generate_mandatory_field_missing_response('after')
-        if 'before' not in request.GET or not request.GET['before']:
+        if not request.GET.get('before'):
             return generate_mandatory_field_missing_response('before')
         try:
             movies = movies.filter(release_date__gt=request.GET['after'])
