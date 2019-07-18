@@ -176,3 +176,8 @@ Why these packages are in `requirements.txt`:
 * `requests` – for communication with the TMDb API
 * `psycopg2` – for Postgres support (SQLite may be used in development but Postgres is production–grade)
 * `dj-database-url` – for Heroku Postgres add-on support (extremely simple to set up this way)
+
+
+## License
+
+The contents of this project are licensed under the [Mozilla Public License version 2.0](/LICENSE).
