@@ -55,8 +55,8 @@ class EndpointsTestCase(TestCase):
             'title': 'The Godfather'
         }
         actual_response_data = json.loads(response.getvalue())
-        self.assertEqual(len(actual_response_data), 1)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(actual_response_data), 1)
         for key in expected_response_data:
             self.assertEqual(actual_response_data[0][key], expected_response_data[key])
 
@@ -83,8 +83,8 @@ class EndpointsTestCase(TestCase):
             'text': 'Tremendous'
         }
         actual_response_data = json.loads(response.getvalue())
-        self.assertEqual(len(actual_response_data), 1)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(actual_response_data), 1)
         for key in expected_response_data:
             self.assertEqual(actual_response_data[0][key], expected_response_data[key])
 
