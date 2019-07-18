@@ -170,7 +170,7 @@ Now deploy from the Deploy tab and wait for migrations to finish. After that, th
 
 ## Dependencies
 
-Why these packages are in `requirements.txt`:
+Why these packages?
 
 * `Django` – it's Django
 * `requests` – for communication with the TMDb API
