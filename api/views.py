@@ -2,7 +2,7 @@ from typing import Sequence
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.db.utils import IntegrityError
-from .models import Movie, Comment
+from api.models import Movie, Comment
 
 
 def generate_resource_not_found_response(resource_type: str) -> JsonResponse:
