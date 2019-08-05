@@ -180,4 +180,4 @@ Why these packages?
 
 ## License
 
-The contents of this project are licensed under the [Mozilla Public License version 2.0](/LICENSE).
+The contents of this project are licensed under the [Mozilla Public License 2.0](LICENSE).
